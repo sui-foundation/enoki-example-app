@@ -4,15 +4,25 @@ import { useEnokiFlow } from "@mysten/enoki/react";
 import { useEffect, useState } from "react";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
+import { getFaucetHost, requestSuiFromFaucetV0 } from '@mysten/sui.js/faucet';
 
 export default function Home() {
   const client = useSuiClient();
   const enokiFlow = useEnokiFlow();
   const [session, setSession] = useState<any | null>(null);
 
+  const [ suiAddress, setSuiAddress ] = useState<string | null>(null);
+  const [ balance, setBalance ] = useState<number>(0);
+
   useEffect(() => {
     completeLogin();
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      getAccountInfo();
+    }
+  }, [session]);
 
   const completeLogin = async () => {
     try {
@@ -33,9 +43,33 @@ export default function Home() {
     }
   };
 
+  const getAccountInfo = async () => {
+    const keypair = await enokiFlow.getKeypair({ network: "testnet" });
+    const address = keypair.toSuiAddress();
+    setSuiAddress(address);
+
+    const balance = await client.getBalance({ owner: address });
+    setBalance(parseInt(balance.totalBalance) / 10 ** 9)
+  };
+
+  const onRequestSui = async () => {
+
+    if (!suiAddress) {
+      console.error('Login first to get SUI address.')
+      return;
+    }
+
+    await requestSuiFromFaucetV0({
+      host: getFaucetHost('testnet'),
+      recipient: suiAddress,
+    });
+
+    console.log('SUI requested successfully.')
+  };
+
   async function handleButtonClick() {
     // Get the keypair for the current user.
-    const keypair = await enokiFlow.getKeypair();
+    const keypair = await enokiFlow.getKeypair({ network: "testnet" });
 
     const address = keypair.toSuiAddress();
     console.log("address", address);
@@ -63,7 +97,13 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center justify-start">
         <h1>Welcome!</h1>
-        <p className="max-w-md">Session: {JSON.stringify(session, null, 4)}</p>
+        <p>
+          Your address: {`${suiAddress?.slice(0, 5)}...${suiAddress?.slice(63)}`}
+        </p>
+        <p>
+          Your SUI balance: {balance.toPrecision(3)} SUI <button onClick={getAccountInfo}>Refresh</button>
+        </p>
+        <button onClick={onRequestSui}>Request SUI</button>
         <button onClick={handleButtonClick}>Sign transaction</button>
         <button
           onClick={async () => {
