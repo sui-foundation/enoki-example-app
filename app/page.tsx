@@ -33,13 +33,18 @@ export default function Home() {
     } catch (error) {
       console.error('error', error);
     } finally {
-      const session = await enokiFlow.getSession();
-      console.log('session', session);
-      setSession(session);
+      
+      try {
+        const session = await enokiFlow.getSession();
+        console.log('session', session);
+        setSession(session);
 
-      // const keypair = await enokiFlow.getKeypair({network: 'testnet'});
-      // console.log('keypair', keypair);
-      // setKeypair(keypair);
+        const keypair = await enokiFlow.getKeypair({network: 'testnet'});
+        console.log('keypair', keypair);
+        setKeypair(keypair);
+      } catch (error) {
+        console.error('error', error);
+      }
 
       // remove the URL fragment
       window.history.replaceState(null, '', window.location.pathname);
