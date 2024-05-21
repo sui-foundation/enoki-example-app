@@ -103,7 +103,7 @@ export default function Home() {
         <p>
           Your SUI balance: {balance.toPrecision(3)} SUI <button onClick={getAccountInfo}>Refresh</button>
         </p>
-        <button onClick={onRequestSui}>Request SUI</button>
+        <button onClick={onRequestSui} disabled={balance > .5}>Request SUI</button>
         <button onClick={handleButtonClick}>Sign transaction</button>
         <button
           onClick={async () => {
