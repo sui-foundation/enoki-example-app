@@ -1,18 +1,19 @@
-'use client';
+"use client";
 
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { EnokiFlowProvider } from "@mysten/enoki/react";
-import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
-import { getFullnodeUrl } from '@mysten/sui.js/client';
+import {
+  createNetworkConfig,
+  SuiClientProvider,
+} from "@mysten/dapp-kit";
+import { getFullnodeUrl } from "@mysten/sui.js/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
- 
 // Config options for the networks you want to connect to
 const { networkConfig } = createNetworkConfig({
-	testnet: { url: getFullnodeUrl('testnet') },
+  testnet: { url: getFullnodeUrl("testnet") },
 });
 
 export default function RootLayout({
