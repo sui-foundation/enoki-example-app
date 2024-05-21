@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
-        <EnokiFlowProvider apiKey="enoki_public_818d52256623b170c33438c51070eaa0">
+        <EnokiFlowProvider apiKey={process.env.ENOKI_PUB_KEY!}>
           <body className={inter.className}>{children}</body>
         </EnokiFlowProvider>
       </SuiClientProvider>
