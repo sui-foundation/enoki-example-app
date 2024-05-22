@@ -1,7 +1,16 @@
 # Enoki Example App
 This is a simple, one-page app that integrates with Mysten Lab's Enoki. 
 
-## Getting set up on the Enoki Dev Portal
+## Table of Contents
+- [Enoki Example App](#enoki-example-app)
+  - [Table of Contents](#table-of-contents)
+  - [Enoki Dev Portal Setup](#enoki-dev-portal-setup)
+    - [Setting up Enoki API keys](#setting-up-enoki-api-keys)
+    - [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider)
+    - [Setting up Enoki Sponsor Transactions](#setting-up-enoki-sponsor-transactions)
+
+## Enoki Dev Portal Setup
+### Setting up Enoki API keys
 In order to use Enoki, you need to sign into the Enoki Dev Portal and set up your new project. Below are the steps required for this. 
 
 1. Navigate to the [Enoki Dev Portal](https://portal.enoki.mystenlabs.com) and sign in with the email you want to manage your project with. 
@@ -54,7 +63,7 @@ In order to use Enoki, you need to sign into the Enoki Dev Portal and set up you
     GOOGLE_CLIENT_ID=
     ```
 
-## Setting up your Enoki Auth Provider
+### Setting up your Enoki Auth Provider
 To use the *zkLogin* feature, you will need to connect your auth provider to the Enoki Dev Portal. 
 
 1. Navigate to the `Auth Providers` section of your Enoki project. 
@@ -93,7 +102,7 @@ To use the *zkLogin* feature, you will need to connect your auth provider to the
 
     Reference this demo code as an example of implementing the Enoki auth flow in your app.
 
-## Setting up Enoki Sponsor Transactions
+### Setting up Enoki Sponsor Transactions
 In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addresses and move targets that are supported. 
 
 1. Navigate to the `Sponsored Transactions` section of your Enoki project. 
