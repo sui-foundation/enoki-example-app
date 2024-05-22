@@ -6,43 +6,58 @@ import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
 import { getFaucetHost, requestSuiFromFaucetV0 } from '@mysten/sui.js/faucet';
 
-export default function Home() {
-  const client = useSuiClient();
-  const enokiFlow = useEnokiFlow();
+export default function Page() {
+
+  const client = useSuiClient();    // The SuiClient instance  
+  const enokiFlow = useEnokiFlow(); // The EnokiFlow instance
+  
+  /**
+   * The current user session, if any. This is used to determine whether the user is logged in or 
+   * not.
+   */
   const [session, setSession] = useState<any | null>(null);
 
+  /* The account information of the current user. */
   const [ suiAddress, setSuiAddress ] = useState<string | null>(null);
   const [ balance, setBalance ] = useState<number>(0);
 
+  /**
+   * When the page loads, complete the login flow.
+  */
   useEffect(() => {
     completeLogin();
   }, []);
 
+  /**
+   * When the user logs in, fetch the account information.
+  */
   useEffect(() => {
     if (session) {
       getAccountInfo();
     }
   }, [session]);
 
+  /**
+   * Complete the Enoki login flow after the user is redirected back to the app.
+   */
   const completeLogin = async () => {
     try {
-      const res = await enokiFlow.handleAuthCallback();
-      console.log("res", res);
+      await enokiFlow.handleAuthCallback();
     } catch (error) {
-      console.error("error", error);
+      console.error("Erro handling auth callback", error);
     } finally {
-      try {
-        const session = await enokiFlow.getSession();
-        console.log("session", session);
-        setSession(session);
-      } catch (error) {
-        console.error("error", error);
-      }
+      // Fetch the session
+      const session = await enokiFlow.getSession();
+      setSession(session);
+
       // remove the URL fragment
       window.history.replaceState(null, "", window.location.pathname);
     }
   };
 
+  /**
+   * Fetch the account information of the current user.
+  */
   const getAccountInfo = async () => {
     const keypair = await enokiFlow.getKeypair({ network: "testnet" });
     const address = keypair.toSuiAddress();
@@ -52,25 +67,31 @@ export default function Home() {
     setBalance(parseInt(balance.totalBalance) / 10 ** 9)
   };
 
+  /**
+   * Request SUI from the faucet.
+  */
   const onRequestSui = async () => {
-
+    // Ensures the user is logged in and has a SUI address.
     if (!suiAddress) {
       console.error('Login first to get SUI address.')
       return;
     }
 
+    // Request SUI from the faucet.
     await requestSuiFromFaucetV0({
       host: getFaucetHost('testnet'),
       recipient: suiAddress,
     });
-
-    console.log('SUI requested successfully.')
   };
 
-  async function handleButtonClick() {
+  /**
+   * Transfer SUI to another account. This transaction is not sponsored by the app. 
+   */
+  async function transferSui() {
     // Get the keypair for the current user.
     const keypair = await enokiFlow.getKeypair({ network: "testnet" });
 
+    // Create a new transaction block
     const txb = new TransactionBlock();
 
     // Add some transactions to the block...
@@ -83,14 +104,17 @@ export default function Home() {
     );
 
     // Sign and execute the transaction block, using the Enoki keypair
-    const res = await client.signAndExecuteTransactionBlock({
+    await client.signAndExecuteTransactionBlock({
       signer: keypair,
       transactionBlock: txb,
     });
-    console.log("res", res);
   }
 
+  /**
+   * Increment the global counter. This transaction is sponsored by the app.
+  */
   async function incrementCounter() {
+    // Create a new transaction block
     const txb = new TransactionBlock();
 
     // Add some transactions to the block...
@@ -99,13 +123,12 @@ export default function Home() {
       target: '0x5794fff859ee70e28ec8a419f2a73830fb66bcaaaf76a68e41fcaf5e057d7bcc::global_counter::increment'
     })
 
-    // Sign and execute the transaction block, using the Enoki keypair
-    const res = await enokiFlow.sponsorAndExecuteTransactionBlock({
+    // Sponsor and execute the transaction block, using the Enoki keypair
+    await enokiFlow.sponsorAndExecuteTransactionBlock({
       transactionBlock: txb,
       network: 'testnet',
       client
     });
-    console.log("res", res);
   }
 
   if (session) {
@@ -119,7 +142,7 @@ export default function Home() {
           Your SUI balance: {balance.toPrecision(3)} SUI <button onClick={getAccountInfo}>Refresh</button>
         </p>
         <button onClick={onRequestSui} disabled={balance > .5}>Request SUI</button>
-        <button onClick={handleButtonClick}>Sign transaction</button>
+        <button onClick={transferSui}>Sign transaction</button>
         <button onClick={incrementCounter}>Increment counter</button>
         <button
           onClick={async () => {
