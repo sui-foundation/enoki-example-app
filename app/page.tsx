@@ -47,6 +47,7 @@ export default function Page() {
   useEffect(() => {
     if (session) {
       getAccountInfo();
+      getCount();
     }
   }, [session]);
 
@@ -141,6 +142,21 @@ export default function Page() {
     setTransferLoading(false);
   }
 
+  async function getCount() {
+    setCountLoading(true);
+
+    const res = await client.getObject({
+      id: '0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6',
+      options: {
+        showContent: true
+      }
+    }) as any;
+
+    setCounter(res.data.content.fields.count as number)
+
+    setCountLoading(false);
+  }
+
   /**
    * Increment the global counter. This transaction is sponsored by the app.
    */
@@ -167,10 +183,13 @@ export default function Page() {
       network: "testnet",
       client,
     });
-    
+
+    setCounter(counter + 1);
 
     setCounterDigest(res.digest);
     setCounterLoading(false);
+    
+    getCount();
   }
 
   if (session) {
