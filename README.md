@@ -1,5 +1,5 @@
 # Enoki Example App
-This is a simple, one-page app that integrates with Mysten Lab's Enoki. 
+This is a simple, one-page app that integrates with Mysten Lab's Enoki. The live demo can be foud [here](https://enoki-example-app.vercel.app).
 
 ## Table of Contents
 - [Enoki Example App](#enoki-example-app)
