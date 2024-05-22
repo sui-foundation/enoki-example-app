@@ -3,10 +3,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { EnokiFlowProvider } from "@mysten/enoki/react";
-import {
-  createNetworkConfig,
-  SuiClientProvider,
-} from "@mysten/dapp-kit";
+import { createNetworkConfig, SuiClientProvider } from "@mysten/dapp-kit";
 import { getFullnodeUrl } from "@mysten/sui.js/client";
 
 const inter = Inter({ subsets: ["latin"] });
