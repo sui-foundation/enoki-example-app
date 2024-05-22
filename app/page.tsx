@@ -62,7 +62,11 @@ export default function Page() {
     } finally {
       // Fetch the session
       const session = await enokiFlow.getSession();
-      setSession(session);
+      console.log("Session", session);
+
+      if (session && session.jwt){
+        setSession(session);
+      }
 
       // remove the URL fragment
       window.history.replaceState(null, "", window.location.pathname);
