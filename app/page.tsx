@@ -71,9 +71,6 @@ export default function Home() {
     // Get the keypair for the current user.
     const keypair = await enokiFlow.getKeypair({ network: "testnet" });
 
-    const address = keypair.toSuiAddress();
-    console.log("address", address);
-
     const txb = new TransactionBlock();
 
     // Add some transactions to the block...
@@ -93,6 +90,24 @@ export default function Home() {
     console.log("res", res);
   }
 
+  async function incrementCounter() {
+    const txb = new TransactionBlock();
+
+    // Add some transactions to the block...
+    txb.moveCall({
+      arguments: [txb.pure('0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6')],
+      target: '0x5794fff859ee70e28ec8a419f2a73830fb66bcaaaf76a68e41fcaf5e057d7bcc::global_counter::increment'
+    })
+
+    // Sign and execute the transaction block, using the Enoki keypair
+    const res = await enokiFlow.sponsorAndExecuteTransactionBlock({
+      transactionBlock: txb,
+      network: 'testnet',
+      client
+    });
+    console.log("res", res);
+  }
+
   if (session) {
     return (
       <div className="flex flex-col items-center justify-start">
@@ -105,6 +120,7 @@ export default function Home() {
         </p>
         <button onClick={onRequestSui} disabled={balance > .5}>Request SUI</button>
         <button onClick={handleButtonClick}>Sign transaction</button>
+        <button onClick={incrementCounter}>Increment counter</button>
         <button
           onClick={async () => {
             await enokiFlow.logout();
