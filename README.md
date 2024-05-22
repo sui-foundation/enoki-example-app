@@ -53,3 +53,65 @@ In order to use Enoki, you need to sign into the Enoki Dev Portal and set up you
     ENOKI_PUB_KEY=enoki_public_1646656193035707ff4ef3aecafb455e
     GOOGLE_CLIENT_ID=
     ```
+
+## Setting up your Enoki Auth Provider
+To use the *zkLogin* feature, you will need to connect your auth provider to the Enoki Dev Portal. 
+
+1. Navigate to the `Auth Providers` section of your Enoki project. 
+
+    The Auth Providers section is where you can add and manage your app's auth providers. Currently, Enoki supports: 
+
+    - Google
+    - Twitch
+    - Facebook
+    - Apple
+
+    It should look like this: 
+    ![Empty Auth Provider Section](images/empty-auth-provider-page.png)
+
+2. Click `+ New Auth Provider`
+
+    You will be given a prompt that looks like this: 
+    ![New Auth Provider Prompt](images/auth-provider-prompt.png)
+
+    You'll need to select/input the following: 
+
+    - Auth provider: 
+      - [ ] Google
+      - [ ] Facebook
+      - [ ] Twitch
+      - [ ] Apple
+
+    - Client ID: The client given by your desired auth provider
+
+    When creating a key for this demo app, select `Google` and paste your google client id.
+
+    Your auth provider should look something like this: 
+    ![New Auth Provider](images/new-auth-provider.png)
+
+3. You have successfully connected your auth provider to Enoki! 
+
+    Reference this demo code as an example of implementing the Enoki auth flow in your app.
+
+## Setting up Enoki Sponsor Transactions
+In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addresses and move targets that are supported. 
+
+1. Navigate to the `Sponsored Transactions` section of your Enoki project. 
+
+    The Sponsored Transactions section is where you can add and manage the addresses and move targets that you want to be supported in sponsored transactions. 
+
+    It should look like this: 
+    ![Empty Sponsored Transaction Section](images/empty-sponsored-transaction-page.png)
+
+2. Add the addresses and move call targets you want to be supported. 
+
+    Any allowed addresses are senders that can use sponsored transactions. Any allowed move call targets are functions operations that any of your users can use sponsored transactions for. 
+
+    In this demo, the target, `0x5794fff859ee70e28ec8a419f2a73830fb66bcaaaf76a68e41fcaf5e057d7bcc::global_counter::increment` is supported. This means that any users signed into the demo app can call this target and the transaction will be sponsored (meaning the user won't have to pay the gas for this transaction).
+
+    Your allow list should look something like this: 
+    ![New Sponsored Transaction allow list](images/new-sponsored-transaction.png)
+
+3. You have successfully set up your Enoki Sponsored Transaction allow list! 
+
+    Reference this demo code as an example to implementing sponsored transactions in your app.
