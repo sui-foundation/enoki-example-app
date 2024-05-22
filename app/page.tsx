@@ -254,7 +254,7 @@ export default function Page() {
           }
         </div>
         <div className="flex flex-col items-start border">
-          <span className="w-full text-center">Sponsor Transaction Example</span>
+          <span className="w-full text-center">Sponsored Transaction Example</span>
           <div className="flex flex-row items-center gap-2">
             <span>Counter: </span>
             <span>
