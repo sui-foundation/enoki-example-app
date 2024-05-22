@@ -8,6 +8,7 @@ This is a simple, one-page app that integrates with Mysten Lab's Enoki.
     - [Setting up Enoki API keys](#setting-up-enoki-api-keys)
     - [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider)
     - [Setting up Enoki Sponsor Transactions](#setting-up-enoki-sponsor-transactions)
+  - [Running the app locally](#running-the-app-locally)
 
 ## Enoki Dev Portal Setup
 ### Setting up Enoki API keys
@@ -98,7 +99,26 @@ To use the *zkLogin* feature, you will need to connect your auth provider to the
     Your auth provider should look something like this: 
     ![New Auth Provider](images/new-auth-provider.png)
 
-3. You have successfully connected your auth provider to Enoki! 
+3. Now you have your Enoki Auth Provider! 
+
+    To use the auth provider in this demo, make a copy of [.env.template](./.env.template) named `.env.local` and paste in the client id into `GOOGLE_CLIENT_ID`. It should look something like this: 
+
+    ```
+    ENOKI_PUB_KEY=enoki_public_1646656193035707ff4ef3aecafb455e
+    GOOGLE_CLIENT_ID=1234567890
+    ```
+
+    You can also add more auth providers by repeating the steps above. 
+
+    Your `.env.local` file should look something like this: 
+    ```
+    ENOKI_PUB_KEY=enoki_public_1646656193035707ff4ef3aecafb455e
+    GOOGLE_CLIENT_ID=1234567890
+    ```
+
+    Note that you can add more auth providers by repeating the steps above.
+
+4. You have successfully connected your auth provider to Enoki! 
 
     Reference this demo code as an example of implementing the Enoki auth flow in your app.
 
@@ -124,3 +144,12 @@ In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addre
 3. You have successfully set up your Enoki Sponsored Transaction allow list! 
 
     Reference this demo code as an example to implementing sponsored transactions in your app.
+
+
+## Running the app locally
+Before running the app, following the setup instructions above to set up your [Enoki API keys](#setting-up-enoki-api-keys), [Auth Providers](#setting-up-your-enoki-auth-provider), and [Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
+
+1. Clone the repository and navigate to the root directory.
+2. Install the dependencies by running `yarn install`.
+3. Ensure the `.env.local` file is set up with your Enoki API key and Google Auth Provider client id.
+4. Start the app by running `yarn dev`.
