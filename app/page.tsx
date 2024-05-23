@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
 import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui.js/faucet";
-import { ExternalLink, LoaderCircle, RefreshCw } from "lucide-react";
+import { ExternalLink, Github, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -442,6 +442,8 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-start">
+      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-4"><Button variant={'link'} size={'icon'}><Github /></Button></a>
+      <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
       <Button
         onClick={async () => {
           window.location.href = await enokiFlow.createAuthorizationURL({
@@ -454,6 +456,7 @@ export default function Page() {
       >
         Sign in with Google
       </Button>
+      
     </div>
   );
 }
