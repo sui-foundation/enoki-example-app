@@ -442,7 +442,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-start">
-      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-4"><Button variant={'link'} size={'icon'}><Github /></Button></a>
+      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-0 sm:right-4"><Button variant={'link'} size={'icon'}><Github /></Button></a>
       <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
       <Button
         onClick={async () => {
