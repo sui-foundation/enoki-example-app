@@ -11,12 +11,20 @@
   "dependencies": {
     "@mysten/dapp-kit": "^0.13.2",
     "@mysten/enoki": "^0.2.7",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-query": "^5.37.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",
+    "next-themes": "^0.3.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sonner": "^1.4.41",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",
