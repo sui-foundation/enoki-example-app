@@ -163,7 +163,7 @@ You will need to set up a Google Auth API key to use the Google Sign-In feature 
 5. Click `Create` and copy the client id.
 
     Your OAuth client info should look something like this:
-    ![OAuth created](images/oauth-created.png)
+    ![OAuth created](images/OAuth-created.png)
 
 6. You can now paste this client id into the `.env.local` file as described in the [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider) section.
    
