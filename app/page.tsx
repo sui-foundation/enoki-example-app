@@ -383,8 +383,8 @@ export default function Page() {
             </Card>
           </PopoverContent>
         </Popover>
-        <div className="flex flex-row  flex-wrap gap-4 items-start">
-          <Card className="max-w-xs min-x-xs">
+        <div className="flex flex-col items-center sm:flex-row gap-4 sm:items-start">
+          <Card className="max-w-xs">
             <CardHeader>
               <CardTitle>Sponsored Transaction Example</CardTitle>
               <CardDescription>This transaction will be sponsored by Enoki and will not require you to pay gas! Try incrementing the counter with a balance of 0 SUI to test it out.</CardDescription>
@@ -402,7 +402,7 @@ export default function Page() {
             </CardFooter>
           </Card>
 
-          <Card className="max-w-sm min-x-sm">
+          <Card className="max-w-xs">
             <CardHeader>
               <CardTitle>Transfer Transaction Example</CardTitle>  
               <CardDescription>Transfer SUI to another account. This transaction is not sponsored by the app.</CardDescription>
@@ -442,7 +442,10 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-start">
       <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-0 sm:right-4" onClick={() => {track('github')}}><Button variant={'link'} size={'icon'}><Github /></Button></a>
-      <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
+      <div>
+        <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
+        <p className="text-md m-4 opacity-50 max-w-md">This is a demo app that showcases the <a href="https://portal.enoki.mystenlabs.com" target="_blank" className="underline cursor-pointer text-blue-700 hover:text-blue-500">Enoki</a> zkLogin flow and sponsored transaction flow. NOTE: This example runs on the <span className="text-blue-700">Sui test network</span></p>
+      </div>
       <Button
         onClick={async () => {
           track("Sign in with Google");
