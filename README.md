@@ -156,7 +156,7 @@ You will need to set up a Google Auth API key to use the Google Sign-In feature 
     ![Create OAuth client ID](images/create-credential.png)
 
 3. Select `Web application` as the application type.
-4. Add `http://localhost:3000` to the `Authorized redirect URIs`.
+4. Add `http://localhost:3000/` to the `Authorized redirect URIs`.
 
     Your setup should look something like this:
     ![OAuth setup](images/authorized-url.png)
