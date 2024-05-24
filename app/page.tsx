@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { BalanceChange } from "@mysten/sui.js/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { track } from "@vercel/analytics"
 
 
 export default function Page() {
@@ -35,7 +36,6 @@ export default function Page() {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>('');
   const [transferLoading, setTransferLoading] = useState<boolean>(false);
-  const [transferDigest, setTransferDigest] = useState<string>("");
 
   /* Counter state */
   const [counter, setCounter] = useState<number>(0);
@@ -102,6 +102,9 @@ export default function Page() {
    */
   const onRequestSui = async () => {
     const promise = async () => {
+
+      track("Request SUI");
+
       // Ensures the user is logged in and has a SUI address.
       if (!suiAddress) {
         throw new Error("No SUI address found");
@@ -152,6 +155,9 @@ export default function Page() {
    */
   async function transferSui() {
     const promise = async () => {
+
+      track("Transfer SUI");
+
       setTransferLoading(true);
 
       // Validate the transfer amount
@@ -253,6 +259,8 @@ export default function Page() {
   async function incrementCounter() {
 
     const promise = async () => {
+
+      track("Increment Counter");
 
       setCounterLoading(true);
 
@@ -420,14 +428,6 @@ export default function Page() {
                   onChange={(e) => setAmount(e.target.value as any)}
                 />
               </div>
-              {
-                transferDigest !== "" && (
-                  <div className="flex flex-row gap-2 items-center">
-                    <span className="font-semibold">Transfer Digest: </span>
-                    <a>{transferDigest}</a>
-                  </div>
-                )
-              }
             </CardContent>
             <CardFooter className="w-full flex flex-row items-center justify-center">
               <Button className="w-full" onClick={transferSui} disabled={transferLoading}>Transfer SUI</Button>
@@ -441,10 +441,11 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-start">
-      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-0 sm:right-4"><Button variant={'link'} size={'icon'}><Github /></Button></a>
+      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-0 sm:right-4" onClick={() => {track('github')}}><Button variant={'link'} size={'icon'}><Github /></Button></a>
       <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
       <Button
         onClick={async () => {
+          track("Sign in with Google");
           window.location.href = await enokiFlow.createAuthorizationURL({
             provider: "google",
             clientId: process.env.GOOGLE_CLIENT_ID!,
