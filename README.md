@@ -1,5 +1,5 @@
 # Enoki Example App
-This is a simple, one-page app that integrates with Mysten Lab's Enoki. The live demo can be foud [here](https://enoki-example-app.vercel.app).
+This is a simple, one-page app that integrates with Mysten Lab's Enoki. The live testnet demo can be foud [here](https://enoki-example-app.vercel.app).
 
 ## Table of Contents
 - [Enoki Example App](#enoki-example-app)
@@ -8,6 +8,7 @@ This is a simple, one-page app that integrates with Mysten Lab's Enoki. The live
     - [Setting up Enoki API keys](#setting-up-enoki-api-keys)
     - [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider)
     - [Setting up Enoki Sponsor Transactions](#setting-up-enoki-sponsor-transactions)
+  - [Getting your Google Client ID](#getting-your-google-client-id)
   - [Running the app locally](#running-the-app-locally)
 
 ## Enoki Dev Portal Setup
@@ -94,7 +95,7 @@ To use the *zkLogin* feature, you will need to connect your auth provider to the
 
     - Client ID: The client given by your desired auth provider
 
-    When creating a key for this demo app, select `Google` and paste your google client id.
+    When creating a key for this demo app, select `Google` and paste your google client id. Follow the [instructions](#getting-your-google-client-id) to get your client id from Google.
 
     Your auth provider should look something like this: 
     ![New Auth Provider](images/new-auth-provider.png)
@@ -144,6 +145,28 @@ In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addre
 3. You have successfully set up your Enoki Sponsored Transaction allow list! 
 
     Reference this demo code as an example to implementing sponsored transactions in your app.
+
+
+## Getting your Google Client ID
+You will need to set up a Google Auth API key to use the Google Sign-In feature in this demo app.
+
+1. Navigate to the [Google Developers Console](https://console.cloud.google.com/apis/credentials).
+2. Click `+ Create Credentials` and select `OAuth client ID`.
+
+    ![Create OAuth client ID](images/create-credential.png)
+
+3. Select `Web application` as the application type.
+4. Add `http://localhost:3000` to the `Authorized redirect URIs`.
+
+    Your setup should look something like this:
+    ![OAuth setup](images/authorized-url.png)
+5. Click `Create` and copy the client id.
+
+    Your OAuth client info should look something like this:
+    ![OAuth created](images/oauth-created.png)
+
+6. You can now paste this client id into the `.env.local` file as described in the [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider) section.
+   
 
 
 ## Running the app locally
