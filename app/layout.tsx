@@ -6,6 +6,7 @@ import { EnokiFlowProvider } from "@mysten/enoki/react";
 import { createNetworkConfig, SuiClientProvider } from "@mysten/dapp-kit";
 import { getFullnodeUrl } from "@mysten/sui.js/client";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <EnokiFlowProvider apiKey={process.env.ENOKI_PUB_KEY!}>
           <body className={inter.className}>{children}</body>
           <Toaster closeButton  />
+          <Analytics />
         </EnokiFlowProvider>
       </SuiClientProvider>
     </html>
