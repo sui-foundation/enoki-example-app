@@ -1,20 +1,20 @@
 "use client";
 
-import { useEnokiFlow } from "@mysten/enoki/react";
 import { useEffect, useState } from "react";
-import { TransactionBlock } from "@mysten/sui.js/transactions";
-import { useSuiClient } from "@mysten/dapp-kit";
-import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui.js/faucet";
+import { Transaction } from "@mysten/sui/transactions";
+import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui/faucet";
 import { ExternalLink, Github, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner"
-import { BalanceChange } from "@mysten/sui.js/client";
+import { BalanceChange } from "@mysten/sui/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { track } from "@vercel/analytics"
+import { useSuiClient } from '@mysten/dapp-kit';
+import { useEnokiFlow } from '@mysten/enoki/react';
 
 
 export default function Page() {
@@ -171,21 +171,21 @@ export default function Page() {
       const keypair = await enokiFlow.getKeypair({ network: "testnet" });
 
       // Create a new transaction block
-      const txb = new TransactionBlock();
+      const txb = new Transaction();
 
       // Add some transactions to the block...
-      const [coin] = txb.splitCoins(txb.gas, [txb.pure(parsedAmount * 10 ** 9)]);
+      const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(parsedAmount * 10 ** 9)]);
       txb.transferObjects(
         [coin],
-        txb.pure(
+        txb.pure.address(
           recipientAddress
         )
       );
 
       // Sign and execute the transaction block, using the Enoki keypair
-      const res = await client.signAndExecuteTransactionBlock({
+      const res = await client.signAndExecuteTransaction({
         signer: keypair,
-        transactionBlock: txb,
+        transaction: txb,
         options: {
           showEffects: true,
           showBalanceChanges: true,
@@ -264,15 +264,16 @@ export default function Page() {
 
       setCounterLoading(true);
 
+      // Get the keypair for the current user.
+      const keypair = await enokiFlow.getKeypair({ network: "testnet" });
+
       // Create a new transaction block
-      const txb = new TransactionBlock();
+      const txb = new Transaction();
 
       // Add some transactions to the block...
       txb.moveCall({
         arguments: [
-          txb.pure(
-            "0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6"
-          ),
+          txb.object("0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6")
         ],
         target:
           "0x5794fff859ee70e28ec8a419f2a73830fb66bcaaaf76a68e41fcaf5e057d7bcc::global_counter::increment",
@@ -280,8 +281,8 @@ export default function Page() {
 
       try {
         // Sponsor and execute the transaction block, using the Enoki keypair
-        const res = await enokiFlow.sponsorAndExecuteTransactionBlock({
-          transactionBlock: txb,
+        const res = await enokiFlow.sponsorAndExecuteTransaction({
+          transaction: txb,
           network: "testnet",
           client,
         });

@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { EnokiFlowProvider } from "@mysten/enoki/react";
 import { createNetworkConfig, SuiClientProvider } from "@mysten/dapp-kit";
-import { getFullnodeUrl } from "@mysten/sui.js/client";
+import { getFullnodeUrl } from "@mysten/sui/client";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react"
 
