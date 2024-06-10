@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Transaction } from "@mysten/sui/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
-import { useEnokiFlow } from "@mysten/enoki/react";
+import { useEnokiFlow, useZkLogin } from "@mysten/enoki/react";
 import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui/faucet";
 import { ExternalLink, Github, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,15 +30,9 @@ import { track } from "@vercel/analytics";
 export default function Page() {
   const client = useSuiClient(); // The SuiClient instance
   const enokiFlow = useEnokiFlow(); // The EnokiFlow instance
-
-  /**
-   * The current user session, if any. This is used to determine whether the user is logged in or
-   * not.
-   */
-  const [session, setSession] = useState<any | null>(null);
+  const { address: suiAddress } = useZkLogin(); // The zkLogin instance
 
   /* The account information of the current user. */
-  const [suiAddress, setSuiAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<number>(0);
   const [accountLoading, setAccountLoading] = useState<boolean>(true);
 
@@ -53,55 +47,41 @@ export default function Page() {
   const [countLoading, setCountLoading] = useState<boolean>(false);
 
   /**
-   * When the page loads, complete the login flow.
-   */
-  useEffect(() => {
-    completeLogin();
-  }, []);
-
-  /**
    * When the user logs in, fetch the account information.
    */
   useEffect(() => {
-    if (session) {
+    if (suiAddress) {
       getAccountInfo();
       getCount();
     }
-  }, [session]);
+  }, [suiAddress]);
 
-  /**
-   * Complete the Enoki login flow after the user is redirected back to the app.
-   */
-  const completeLogin = async () => {
-    try {
-      await enokiFlow.handleAuthCallback();
-    } catch (error) {
-      console.error("Erro handling auth callback", error);
-    } finally {
-      // Fetch the session
-      const session = await enokiFlow.getSession();
-      console.log("Session", session);
+  const startLogin = async () => {
+    const promise = async () => {
+      window.location.href = await enokiFlow.createAuthorizationURL({
+        provider: "google",
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        redirectUrl: `${window.location.href.split("#")[0]}auth`,
+        network: "testnet",
+      });
+    };
 
-      if (session && session.jwt) {
-        setSession(session);
-      }
-
-      // remove the URL fragment
-      window.history.replaceState(null, "", window.location.pathname);
-    }
+    toast.promise(promise, {
+      loading: "Loggin in...",
+    });
   };
 
   /**
    * Fetch the account information of the current user.
    */
   const getAccountInfo = async () => {
+    if (!suiAddress) {
+      return;
+    }
+
     setAccountLoading(true);
 
-    const keypair = await enokiFlow.getKeypair({ network: "testnet" });
-    const address = keypair.toSuiAddress();
-    setSuiAddress(address);
-
-    const balance = await client.getBalance({ owner: address });
+    const balance = await client.getBalance({ owner: suiAddress });
     setBalance(parseInt(balance.totalBalance) / 10 ** 9);
 
     setAccountLoading(false);
@@ -341,7 +321,7 @@ export default function Page() {
     });
   }
 
-  if (session) {
+  if (suiAddress) {
     return (
       <div>
         <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
@@ -525,19 +505,7 @@ export default function Page() {
           on the <span className="text-blue-700">Sui test network</span>
         </p>
       </div>
-      <Button
-        onClick={async () => {
-          track("Sign in with Google");
-          window.location.href = await enokiFlow.createAuthorizationURL({
-            provider: "google",
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            redirectUrl: window.location.href.split("#")[0],
-            network: "testnet",
-          });
-        }}
-      >
-        Sign in with Google
-      </Button>
+      <Button onClick={startLogin}>Sign in with Google</Button>
     </div>
   );
 }
