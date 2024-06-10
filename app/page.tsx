@@ -2,20 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { Transaction } from "@mysten/sui/transactions";
+import { useSuiClient } from "@mysten/dapp-kit";
+import { useEnokiFlow } from "@mysten/enoki/react";
 import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui/faucet";
 import { ExternalLink, Github, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { BalanceChange } from "@mysten/sui/client";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { track } from "@vercel/analytics"
-import { useSuiClient } from '@mysten/dapp-kit';
-import { useEnokiFlow } from '@mysten/enoki/react';
-
+import { track } from "@vercel/analytics";
 
 export default function Page() {
   const client = useSuiClient(); // The SuiClient instance
@@ -34,7 +44,7 @@ export default function Page() {
 
   /* Transfer form state */
   const [recipientAddress, setRecipientAddress] = useState<string>("");
-  const [amount, setAmount] = useState<string>('');
+  const [amount, setAmount] = useState<string>("");
   const [transferLoading, setTransferLoading] = useState<boolean>(false);
 
   /* Counter state */
@@ -72,7 +82,7 @@ export default function Page() {
       const session = await enokiFlow.getSession();
       console.log("Session", session);
 
-      if (session && session.jwt){
+      if (session && session.jwt) {
         setSession(session);
       }
 
@@ -102,7 +112,6 @@ export default function Page() {
    */
   const onRequestSui = async () => {
     const promise = async () => {
-
       track("Request SUI");
 
       // Ensures the user is logged in and has a SUI address.
@@ -125,24 +134,24 @@ export default function Page() {
       }
 
       return res;
-
     };
-    
+
     toast.promise(promise, {
-      loading: 'Requesting SUI...',
+      loading: "Requesting SUI...",
       success: (data) => {
+        console.log("SUI requested successfully!", data);
 
-        console.log("SUI requested successfully!", data)
+        const suiBalanceChange = data.transferredGasObjects
+          .map((faucetUpdate) => {
+            return faucetUpdate.amount / 10 ** 9;
+          })
+          .reduce((acc: number, change: any) => {
+            return acc + change;
+          }, 0);
 
-        const suiBalanceChange = data.transferredGasObjects.map((faucetUpdate) => {
-          return faucetUpdate.amount / 10 ** 9;
-        }).reduce((acc: number, change: any) => {
-          return acc + change;
-        }, 0);
+        setBalance(balance + suiBalanceChange);
 
-        setBalance( balance + suiBalanceChange );
-
-        return 'SUI requested successfully! ';
+        return "SUI requested successfully! ";
       },
       error: (error) => {
         return error.message;
@@ -155,7 +164,6 @@ export default function Page() {
    */
   async function transferSui() {
     const promise = async () => {
-
       track("Transfer SUI");
 
       setTransferLoading(true);
@@ -174,13 +182,10 @@ export default function Page() {
       const txb = new Transaction();
 
       // Add some transactions to the block...
-      const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(parsedAmount * 10 ** 9)]);
-      txb.transferObjects(
-        [coin],
-        txb.pure.address(
-          recipientAddress
-        )
-      );
+      const [coin] = txb.splitCoins(txb.gas, [
+        txb.pure.u64(parsedAmount * 10 ** 9),
+      ]);
+      txb.transferObjects([coin], txb.pure.address(recipientAddress));
 
       // Sign and execute the transaction block, using the Enoki keypair
       const res = await client.signAndExecuteTransaction({
@@ -197,40 +202,59 @@ export default function Page() {
       console.log("Transfer response", res);
 
       if (res.effects?.status.status !== "success") {
-        const suiBalanceChange = res.balanceChanges?.filter((balanceChange: BalanceChange) => {
-          return balanceChange.coinType === "0x2::sui::SUI";
-        }).map((balanceChange: BalanceChange) => {
-          return parseInt(balanceChange.amount) / 10 ** 9;
-        }).reduce((acc: number, change: any) => {
-          if (change.coinType === "0x2::sui::SUI") {
-            return acc + parseInt(change.amount);
-          }
-          return acc;
-        }) || 0;
-        setBalance( balance - suiBalanceChange );
-        throw new Error("Transfer failed with status: " + res.effects?.status.error);
+        const suiBalanceChange =
+          res.balanceChanges
+            ?.filter((balanceChange: BalanceChange) => {
+              return balanceChange.coinType === "0x2::sui::SUI";
+            })
+            .map((balanceChange: BalanceChange) => {
+              return parseInt(balanceChange.amount) / 10 ** 9;
+            })
+            .reduce((acc: number, change: any) => {
+              if (change.coinType === "0x2::sui::SUI") {
+                return acc + parseInt(change.amount);
+              }
+              return acc;
+            }) || 0;
+        setBalance(balance - suiBalanceChange);
+        throw new Error(
+          "Transfer failed with status: " + res.effects?.status.error
+        );
       }
 
       return res;
-    }
+    };
 
     toast.promise(promise, {
-      loading: 'Transfer SUI...',
+      loading: "Transfer SUI...",
       success: (data) => {
+        const suiBalanceChange =
+          data.balanceChanges
+            ?.filter((balanceChange: BalanceChange) => {
+              return balanceChange.coinType === "0x2::sui::SUI";
+            })
+            .map((balanceChange: BalanceChange) => {
+              return parseInt(balanceChange.amount) / 10 ** 9;
+            })
+            .reduce((acc: number, change: any) => {
+              if (change.coinType === "0x2::sui::SUI") {
+                return acc + parseInt(change.amount);
+              }
+              return acc;
+            }) || 0;
+        setBalance(balance - suiBalanceChange);
 
-        const suiBalanceChange = data.balanceChanges?.filter((balanceChange: BalanceChange) => {
-          return balanceChange.coinType === "0x2::sui::SUI";
-        }).map((balanceChange: BalanceChange) => {
-          return parseInt(balanceChange.amount) / 10 ** 9;
-        }).reduce((acc: number, change: any) => {
-          if (change.coinType === "0x2::sui::SUI") {
-            return acc + parseInt(change.amount);
-          }
-          return acc;
-        }) || 0;
-        setBalance( balance - suiBalanceChange );
-
-        return <span className="flex flex-row items-center gap-2">Transfer successful! <a href={`https://suiscan.xyz/testnet/tx/${data.digest}`} target='_blank'><ExternalLink width={12}/></a></span>;
+        return (
+          <span className="flex flex-row items-center gap-2">
+            Transfer successful!{" "}
+            <a
+              href={`https://suiscan.xyz/testnet/tx/${data.digest}`}
+              target="_blank"
+            >
+              <ExternalLink width={12} />
+            </a>
+          </span>
+        );
       },
       error: (error) => {
         return error.message;
@@ -241,14 +265,14 @@ export default function Page() {
   async function getCount() {
     setCountLoading(true);
 
-    const res = await client.getObject({
-      id: '0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6',
+    const res = (await client.getObject({
+      id: "0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6",
       options: {
-        showContent: true
-      }
-    }) as any;
+        showContent: true,
+      },
+    })) as any;
 
-    setCounter(res.data.content.fields.count as number)
+    setCounter(res.data.content.fields.count as number);
 
     setCountLoading(false);
   }
@@ -257,9 +281,7 @@ export default function Page() {
    * Increment the global counter. This transaction is sponsored by the app.
    */
   async function incrementCounter() {
-
     const promise = async () => {
-
       track("Increment Counter");
 
       setCounterLoading(true);
@@ -273,7 +295,9 @@ export default function Page() {
       // Add some transactions to the block...
       txb.moveCall({
         arguments: [
-          txb.object("0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6")
+          txb.object(
+            "0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6"
+          ),
         ],
         target:
           "0x5794fff859ee70e28ec8a419f2a73830fb66bcaaaf76a68e41fcaf5e057d7bcc::global_counter::increment",
@@ -293,13 +317,23 @@ export default function Page() {
         setCounterLoading(false);
         throw error;
       }
-    }
+    };
 
     toast.promise(promise, {
-      loading: 'Incrementing counter...',
+      loading: "Incrementing counter...",
       success: (data) => {
         getCount();
-        return <span className="flex flex-row items-center gap-2">Counter incremented! <a href={`https://suiscan.xyz/testnet/tx/${data.digest}`} target='_blank'><ExternalLink width={12}/></a></span>;
+        return (
+          <span className="flex flex-row items-center gap-2">
+            Counter incremented!{" "}
+            <a
+              href={`https://suiscan.xyz/testnet/tx/${data.digest}`}
+              target="_blank"
+            >
+              <ExternalLink width={12} />
+            </a>
+          </span>
+        );
       },
       error: (error) => {
         return error.message;
@@ -314,14 +348,14 @@ export default function Page() {
         <Popover>
           <PopoverTrigger className="absolute top-4 right-4 max-w-sm" asChild>
             <div>
-              <Button className="hidden sm:block" variant={'secondary'}>
-                {
-                  accountLoading ? (
-                    <LoaderCircle className="animate-spin" />
-                  ) : (
-                    `${suiAddress?.slice(0, 5)}...${suiAddress?.slice(63)} - ${balance.toPrecision(3)} SUI`
-                  )
-                }
+              <Button className="hidden sm:block" variant={"secondary"}>
+                {accountLoading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  `${suiAddress?.slice(0, 5)}...${suiAddress?.slice(
+                    63
+                  )} - ${balance.toPrecision(3)} SUI`
+                )}
               </Button>
               <Avatar className="block sm:hidden">
                 <AvatarImage src="https://github.com/shadcn.png" />
@@ -331,47 +365,53 @@ export default function Page() {
           </PopoverTrigger>
           <PopoverContent>
             <Card className="border-none shadow-none">
-            {/* <Button variant={'ghost'} size='icon' className="relative top-0 right-0" onClick={getAccountInfo}><RefreshCw width={16} /></Button> */}
+              {/* <Button variant={'ghost'} size='icon' className="relative top-0 right-0" onClick={getAccountInfo}><RefreshCw width={16} /></Button> */}
               <CardHeader>
                 <CardTitle>Account Info</CardTitle>
-                <CardDescription>View the account generated by Enoki&apos;s zkLogin flow.</CardDescription>
+                <CardDescription>
+                  View the account generated by Enoki&apos;s zkLogin flow.
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                {
-                  accountLoading ? (
-                    <div className="w-full flex flex-col items-center">
-                      <LoaderCircle className="animate-spin" />
+                {accountLoading ? (
+                  <div className="w-full flex flex-col items-center">
+                    <LoaderCircle className="animate-spin" />
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-row gap-1 items-center">
+                      <span>Address: </span>
+                      {accountLoading ? (
+                        <span>Loading...</span>
+                      ) : (
+                        <div className="flex flex-row gap-1">
+                          <span>{`${suiAddress?.slice(
+                            0,
+                            5
+                          )}...${suiAddress?.slice(63)}`}</span>
+                          <a
+                            href={`https://suiscan.xyz/testnet/account/${suiAddress}`}
+                            target="_blank"
+                          >
+                            <ExternalLink width={12} />
+                          </a>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      <div className="flex flex-row gap-1 items-center">
-                        <span>Address:{" "}</span>
-                        {
-                          accountLoading ? (
-                            <span>Loading...</span>
-                          ) : (
-                            <div className="flex flex-row gap-1">
-                              <span>{`${suiAddress?.slice(0, 5)}...${suiAddress?.slice(63)}`}</span>
-                              <a href={`https://suiscan.xyz/testnet/account/${suiAddress}`} target="_blank"><ExternalLink width={12} /></a>
-                            </div>
-                          )
-                        }
-                      </div>
-                      <div>
-                        <span>Balance:{" "}</span>
-                        <span>{balance.toPrecision(3)} SUI</span>
-                      </div>
-                    </>
-                  )
-                }
+                    <div>
+                      <span>Balance: </span>
+                      <span>{balance.toPrecision(3)} SUI</span>
+                    </div>
+                  </>
+                )}
               </CardContent>
               <CardFooter className="flex flex-row gap-2 items-center justify-between">
-                <Button variant={'outline'} size={'sm'} onClick={onRequestSui}>
+                <Button variant={"outline"} size={"sm"} onClick={onRequestSui}>
                   Request SUI
                 </Button>
                 <Button
-                  variant={'destructive'}
-                  size={'sm'}
+                  variant={"destructive"}
+                  size={"sm"}
                   className="w-full text-center"
                   onClick={async () => {
                     await enokiFlow.logout();
@@ -388,32 +428,43 @@ export default function Page() {
           <Card className="max-w-xs">
             <CardHeader>
               <CardTitle>Sponsored Transaction Example</CardTitle>
-              <CardDescription>This transaction will be sponsored by Enoki and will not require you to pay gas! Try incrementing the counter with a balance of 0 SUI to test it out.</CardDescription>
+              <CardDescription>
+                This transaction will be sponsored by Enoki and will not require
+                you to pay gas! Try incrementing the counter with a balance of 0
+                SUI to test it out.
+              </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               <div className="flex flex-row items-center gap-2">
                 <span>Counter: </span>
-                <span>
-                  {countLoading ? "Loading..." : counter}
-                </span>
+                <span>{countLoading ? "Loading..." : counter}</span>
               </div>
             </CardContent>
             <CardFooter className="w-full flex flex-row items-center justify-center">
-              <Button onClick={incrementCounter} disabled={counterLoading} className="w-full">Increment counter</Button>
+              <Button
+                onClick={incrementCounter}
+                disabled={counterLoading}
+                className="w-full"
+              >
+                Increment counter
+              </Button>
             </CardFooter>
           </Card>
 
           <Card className="max-w-xs">
             <CardHeader>
-              <CardTitle>Transfer Transaction Example</CardTitle>  
-              <CardDescription>Transfer SUI to another account. This transaction is not sponsored by the app.</CardDescription>
+              <CardTitle>Transfer Transaction Example</CardTitle>
+              <CardDescription>
+                Transfer SUI to another account. This transaction is not
+                sponsored by the app.
+              </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col w-full gap-2">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="recipient">Recipient Address</Label>
-                <Input 
-                  type="text" 
-                  id="recipient" 
+                <Input
+                  type="text"
+                  id="recipient"
                   placeholder="0xdeadbeef"
                   value={recipientAddress}
                   onChange={(e) => setRecipientAddress(e.target.value)}
@@ -421,9 +472,9 @@ export default function Page() {
               </div>
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="amount">Transfer Amount (SUI)</Label>
-                <Input 
-                  type="text" 
-                  id="amount" 
+                <Input
+                  type="text"
+                  id="amount"
                   placeholder="1.4"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value as any)}
@@ -431,9 +482,14 @@ export default function Page() {
               </div>
             </CardContent>
             <CardFooter className="w-full flex flex-row items-center justify-center">
-              <Button className="w-full" onClick={transferSui} disabled={transferLoading}>Transfer SUI</Button>
+              <Button
+                className="w-full"
+                onClick={transferSui}
+                disabled={transferLoading}
+              >
+                Transfer SUI
+              </Button>
             </CardFooter>
-            
           </Card>
         </div>
       </div>
@@ -442,10 +498,32 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-start">
-      <a href="https://github.com/dantheman8300/enoki-example-app" target="_blank" className="absolute top-4 right-0 sm:right-4" onClick={() => {track('github')}}><Button variant={'link'} size={'icon'}><Github /></Button></a>
+      <a
+        href="https://github.com/dantheman8300/enoki-example-app"
+        target="_blank"
+        className="absolute top-4 right-0 sm:right-4"
+        onClick={() => {
+          track("github");
+        }}
+      >
+        <Button variant={"link"} size={"icon"}>
+          <Github />
+        </Button>
+      </a>
       <div>
         <h1 className="text-4xl font-bold m-4">Enoki Demo App</h1>
-        <p className="text-md m-4 opacity-50 max-w-md">This is a demo app that showcases the <a href="https://portal.enoki.mystenlabs.com" target="_blank" className="underline cursor-pointer text-blue-700 hover:text-blue-500">Enoki</a> zkLogin flow and sponsored transaction flow. NOTE: This example runs on the <span className="text-blue-700">Sui test network</span></p>
+        <p className="text-md m-4 opacity-50 max-w-md">
+          This is a demo app that showcases the{" "}
+          <a
+            href="https://portal.enoki.mystenlabs.com"
+            target="_blank"
+            className="underline cursor-pointer text-blue-700 hover:text-blue-500"
+          >
+            Enoki
+          </a>{" "}
+          zkLogin flow and sponsored transaction flow. NOTE: This example runs
+          on the <span className="text-blue-700">Sui test network</span>
+        </p>
       </div>
       <Button
         onClick={async () => {
@@ -460,7 +538,6 @@ export default function Page() {
       >
         Sign in with Google
       </Button>
-      
     </div>
   );
 }
