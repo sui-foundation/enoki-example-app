@@ -44,7 +44,19 @@ export default function Page() {
   /* Counter state */
   const [counter, setCounter] = useState<number>(0);
   const [counterLoading, setCounterLoading] = useState<boolean>(false);
-  const [countLoading, setCountLoading] = useState<boolean>(false);
+  const [countLoading, setCountLoading] = useState<boolean>(true);
+
+  /**
+   * Timeout for the counter.
+   * This is used to refresh the counter every 5 seconds.
+   */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getCount();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   /**
    * When the user logs in, fetch the account information.
@@ -243,8 +255,6 @@ export default function Page() {
   }
 
   async function getCount() {
-    setCountLoading(true);
-
     const res = (await client.getObject({
       id: "0xd710735500fc1be7dc448b783ad1fb0b5fd209890a67e518cc47e7dc26856aa6",
       options: {
@@ -362,7 +372,7 @@ export default function Page() {
                     <div className="flex flex-row gap-1 items-center">
                       <span>Address: </span>
                       {accountLoading ? (
-                        <span>Loading...</span>
+                        <LoaderCircle className="animate-spin" />
                       ) : (
                         <div className="flex flex-row gap-1">
                           <span>{`${suiAddress?.slice(
@@ -417,7 +427,11 @@ export default function Page() {
             <CardContent className="flex flex-col gap-2">
               <div className="flex flex-row items-center gap-2">
                 <span>Counter: </span>
-                <span>{countLoading ? "Loading..." : counter}</span>
+                {countLoading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  <span>{counter}</span>
+                )}
               </div>
             </CardContent>
             <CardFooter className="w-full flex flex-row items-center justify-center">
