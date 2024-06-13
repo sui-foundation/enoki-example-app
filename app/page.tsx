@@ -41,6 +41,9 @@ export default function Page() {
   const [amount, setAmount] = useState<string>("");
   const [transferLoading, setTransferLoading] = useState<boolean>(false);
 
+  const [burnAmount, setBurnAmount] = useState<string>("");
+  const [burnLoading, setBurnLoading] = useState<boolean>(false);
+
   /* Counter state */
   const [counter, setCounter] = useState<number>(0);
   const [counterLoading, setCounterLoading] = useState<boolean>(false);
@@ -249,6 +252,78 @@ export default function Page() {
         );
       },
       error: (error) => {
+        return error.message;
+      },
+    });
+  }
+
+  async function burnSui() {
+    const promise = async () => {
+      setBurnLoading(true);
+
+      const parseBurnAmount = parseFloat(burnAmount);
+
+      // Get the keypair for the current user.
+      const keypair = await enokiFlow.getKeypair({ network: "testnet" });
+
+      // Create a new transaction block
+      const txb = new Transaction();
+
+      const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(parseBurnAmount * 10 ** 9)]);
+
+      // Add some transactions to the block...
+      txb.moveCall({
+        arguments: [
+          coin, 
+          txb.object(
+            "0x63da96be626a3657bd65d925ab6fb2e6cb29b2c4e0c3727e4d034f50d5c3110a"
+          )
+        ],
+        target:
+          "0x2ff8b515c11d8b3a3f7ee134b9ebd8f2373350b5aaf26924e94ff0bce224e198::burner::deposit",
+      });
+
+      try {
+        // Sponsor and execute the transaction block, using the Enoki keypair
+        const res = await enokiFlow.sponsorAndExecuteTransaction({
+          transaction: txb,
+          network: "testnet",
+          client,
+        });
+        // const res = await client.signAndExecuteTransaction({
+        //   signer: keypair,
+        //   transaction: txb,
+        //   options: {
+        //     showEffects: true,
+        //     showBalanceChanges: true,
+        //   },
+        // });
+        setBurnLoading(false);
+
+        return res;
+      } catch (error) {
+        setBurnLoading(false);
+        throw error;
+      }
+    };
+
+    toast.promise(promise, {
+      loading: "Incrementing counter...",
+      success: (data) => {
+        return (
+          <span className="flex flex-row items-center gap-2">
+            Burned
+            <a
+              href={`https://suiscan.xyz/testnet/tx/${data.digest}`}
+              target="_blank"
+            >
+              <ExternalLink width={12} />
+            </a>
+          </span>
+        );
+      },
+      error: (error) => {
+        console.error(error);
         return error.message;
       },
     });
@@ -480,6 +555,36 @@ export default function Page() {
                 className="w-full"
                 onClick={transferSui}
                 disabled={transferLoading}
+              >
+                Transfer SUI
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card className="max-w-xs">
+            <CardHeader>
+              <CardTitle>Burn SUI</CardTitle>
+              <CardDescription>
+                Burn your SUI.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col w-full gap-2">
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="amount">Transfer Amount (SUI)</Label>
+                <Input
+                  type="text"
+                  id="amount"
+                  placeholder="1.4"
+                  value={burnAmount}
+                  onChange={(e) => setBurnAmount(e.target.value as any)}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="w-full flex flex-row items-center justify-center">
+              <Button
+                className="w-full"
+                onClick={burnSui}
+                disabled={burnLoading}
               >
                 Transfer SUI
               </Button>
