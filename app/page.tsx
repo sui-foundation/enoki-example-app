@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Transaction } from "@mysten/sui/transactions";
+import { Transaction, coinWithBalance } from "@mysten/sui/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useEnokiFlow, useZkLogin } from "@mysten/enoki/react";
 import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui/faucet";
@@ -269,12 +269,13 @@ export default function Page() {
       // Create a new transaction block
       const txb = new Transaction();
 
-      const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(parseBurnAmount * 10 ** 9)]);
-
       // Add some transactions to the block...
       txb.moveCall({
         arguments: [
-          coin, 
+          coinWithBalance({
+            balance: parseBurnAmount * 10 ** 9,
+            useGasCoin: false
+          }), 
           txb.object(
             "0x63da96be626a3657bd65d925ab6fb2e6cb29b2c4e0c3727e4d034f50d5c3110a"
           )
