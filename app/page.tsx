@@ -73,7 +73,7 @@ export default function Page() {
       window.location.href = await enokiFlow.createAuthorizationURL({
         provider: "google",
         clientId: process.env.GOOGLE_CLIENT_ID!,
-        redirectUrl: `${window.location.href.split("#")[0]}auth`,
+        redirectUrl: `${window.location.origin}/auth`,
         network: "testnet",
       });
     };
