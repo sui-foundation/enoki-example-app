@@ -72,7 +72,7 @@ export default function Page() {
     const promise = async () => {
       window.location.href = await enokiFlow.createAuthorizationURL({
         provider: "google",
-        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         redirectUrl: `${window.location.origin}/auth`,
         network: "testnet",
       });
