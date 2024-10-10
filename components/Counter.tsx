@@ -3,7 +3,7 @@ import type { SuiObjectData } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Card, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { useIncrementCounterTransaction } from "@/hooks/useIncrementCounterTransaction";
 import { useResetCounterTransaction } from "@/hooks/useResetCounterTransaction";
@@ -62,10 +62,10 @@ export function Counter({ id }: { id: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Counter {id}</CardTitle>
+        <CardTitle className="text-xl">Counter {id.slice(0,8)}</CardTitle>
       </CardHeader>
 
-      <div className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-2">
         <span>Count: {getCounterFields(data.data)?.value}</span>
         <div className="flex flex-row items-center gap-2">
           <Button
@@ -87,7 +87,7 @@ export function Counter({ id }: { id: string }) {
             </Button>
           ) : null}
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }
