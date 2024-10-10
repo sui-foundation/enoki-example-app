@@ -27,7 +27,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { track } from "@vercel/analytics";
 import { useCustomWallet } from "@/contexts/CustomWallet";
-import { USER_ROLES } from "@/constants/USER_ROLES";
 import ProfilePopover from "@/components/ProfilePopover";
 import { CreateCounter } from "@/components/CreateCounter";
 import { isValidSuiObjectId } from "@mysten/sui/utils";

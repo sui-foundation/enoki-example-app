@@ -16,12 +16,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCustomWallet } from "@/contexts/CustomWallet";
-import { USER_ROLES } from "@/constants/USER_ROLES";
 import { ExternalLink } from "lucide-react";
 
 export default function ProfilePopover() {
-
-  const { isConnected, logout, redirectToAuthUrl, emailAddress, address } = useCustomWallet();
+  const { isConnected, logout, redirectToAuthUrl, emailAddress, address } =
+    useCustomWallet();
 
   if (isConnected) {
     return (
@@ -81,6 +80,12 @@ export default function ProfilePopover() {
   }
 
   return (
-    <Button onClick={() => {redirectToAuthUrl(USER_ROLES.ROLE_2)}}>Sign in with Google</Button>
-  )
+    <Button
+      onClick={() => {
+        redirectToAuthUrl();
+      }}
+    >
+      Sign in with Google
+    </Button>
+  );
 }

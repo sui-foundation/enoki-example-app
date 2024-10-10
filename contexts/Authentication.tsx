@@ -42,7 +42,6 @@ export const AuthenticationProvider = ({ children }: ChildrenProps) => {
         if (newUser.role === "anonymous" || !newUser.role) {
           router.push("/");
         } else {
-          // router.push(`/${newUser.role}`);
           router.push("/");
         }
       }

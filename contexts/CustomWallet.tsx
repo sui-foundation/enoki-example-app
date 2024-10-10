@@ -52,7 +52,7 @@ interface CustomWalletContextProps {
     props: ExecuteTransactionBlockWithoutSponsorshipProps
   ) => Promise<SuiTransactionBlockResponse | void>;
   logout: () => void;
-  redirectToAuthUrl: (role: UserRole) => void;
+  redirectToAuthUrl: () => void;
 }
 
 export const useCustomWallet = () => {
@@ -145,7 +145,7 @@ export default function CustomWalletProvider({children}: {children: React.ReactN
     return "";
   };
 
-  const redirectToAuthUrl = (userRole: UserRole) => {
+  const redirectToAuthUrl = () => {
     router.push("/auth");
 
     const protocol = window.location.protocol;
@@ -162,7 +162,7 @@ export default function CustomWalletProvider({children}: {children: React.ReactN
         },
       })
       .then((url) => {
-        sessionStorage.setItem("userRole", userRole);
+        // sessionStorage.setItem("userRole", userRole);
         router.push(url);
       })
       .catch((err) => {

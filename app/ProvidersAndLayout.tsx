@@ -38,7 +38,6 @@ const sessionStorageAdapter: StorageAdapter = {
 registerStashedWallet("Breaking the Ice - Community Vote", {});
 
 export const ProvidersAndLayout = ({ children }: ChildrenProps) => {
-
   const { networkConfig } = createNetworkConfig({
     testnet: { url: getFullnodeUrl("testnet") },
     mainnet: { url: getFullnodeUrl("mainnet") },
