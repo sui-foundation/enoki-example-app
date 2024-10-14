@@ -25,7 +25,7 @@ export default function ProfilePopover() {
   if (isConnected) {
     return (
       <Popover>
-        <PopoverTrigger className="absolute top-4 right-4 max-w-sm" asChild>
+        <PopoverTrigger asChild>
           <div>
             <Button className="hidden sm:block" variant={"secondary"}>
               {emailAddress}
