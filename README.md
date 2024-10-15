@@ -10,6 +10,7 @@ Follow the steps below to run your own instance of the app locally.
 5. [Set up your Enoki Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
 6. Install the dependencies by running `yarn install`.
 7. Start the app by running `yarn dev`.
+8. Try out your app by logging in with Google and creating a counter!
 
 ## Enoki Dev Portal Setup
 ### Setting up Enoki API keys
