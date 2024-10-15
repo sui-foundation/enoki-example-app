@@ -1,16 +1,14 @@
 # Enoki Example App
 This is a simple, one-page app that integrates with Mysten Lab's Enoki. The live testnet demo can be foud [here](https://enoki-example-app.vercel.app).
 
-## Table of Contents
-- [Enoki Example App](#enoki-example-app)
-  - [Table of Contents](#table-of-contents)
-  - [Enoki Dev Portal Setup](#enoki-dev-portal-setup)
-    - [Setting up Enoki API keys](#setting-up-enoki-api-keys)
-    - [Setting up your Enoki Auth Provider](#setting-up-your-enoki-auth-provider)
-    - [Setting up Enoki Sponsor Transactions](#setting-up-enoki-sponsor-transactions)
-  - [Getting your Google Client ID](#getting-your-google-client-id)
-  - [Deploying and connecting your smart contract](#deploying-and-connecting-your-smart-contract)
-  - [Running the app locally](#running-the-app-locally)
+Follow the steps below to run your own instance of the app locally.
+
+1. Clone/fork the repository and navigate to the root directory.
+2. [Set up your Enoki API keys](#setting-up-enoki-api-keys)
+3. [Set up your google client id](#getting-your-google-client-id) and [Enoki Auth Provider](#setting-up-your-enoki-auth-provider).
+4. [Set up your Enoki Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
+5. Install the dependencies by running `yarn install`.
+6. Start the app by running `yarn dev`.
 
 ## Enoki Dev Portal Setup
 ### Setting up Enoki API keys
@@ -170,10 +168,3 @@ This demo app uses a simple Sui smart contract that allows anyone to create glob
     PACKAGE_ID=0x915bbeb2fb2274c268378908e50e0e2bee1e1e1da03058f17a86c7b8aabad190
     ```
 
-## Running the app locally
-Before running the app, following the setup instructions above to set up your [Enoki API keys](#setting-up-enoki-api-keys), [Auth Providers](#setting-up-your-enoki-auth-provider), and [Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
-
-1. Clone the repository and navigate to the root directory.
-2. Install the dependencies by running `yarn install`.
-3. Ensure the `.env.local` and `.env` file is set up according to the instructions above.
-4. Start the app by running `yarn dev`.
