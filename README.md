@@ -109,9 +109,11 @@ In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addre
     Any allowed addresses are senders that can use sponsored transactions. Any allowed move call targets are functions operations that any of your users can use sponsored transactions for. 
 
     This app supports the following move call targets: 
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::create`
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::increment`
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::set_value`
+    - `{PACKAGE_ID}::counter::create`
+    - `{PACKAGE_ID}::counter::increment`
+    - `{PACKAGE_ID}::counter::set_value`
+
+    NOTE: Use the package ID you got from [deploying your smart contract](#deploying-and-connecting-your-smart-contract) to get the move call targets. Replace `{PACKAGE_ID}` with the package ID you got from deploying your smart contract.
 
     Your allow list should look something like this: 
     ![New Sponsored Transaction allow list](images/new-sponsored-transaction-list.png)
