@@ -16,7 +16,7 @@ In order to use Enoki, you need to sign into the Enoki Dev Portal and set up you
 
 1. Navigate to the [Enoki Dev Portal](https://portal.enoki.mystenlabs.com) and sign in with the email you want to manage your project with. 
 
-    Note, that during your first time signing in, you'll be asked to provide some info to help Mysten Labs keep informed about who is using Enoki. 
+    Note, that during your first time signing in, you'll be asked to provide some info to help Mysten Labs keep informed about who is using Enoki. You will also be prompted to select your payment plan. Go ahead and skip this for now.
 
     The portal should look something like this when you successfully log on: 
     ![Empty Portal](images/empty-dev-portal.png)
