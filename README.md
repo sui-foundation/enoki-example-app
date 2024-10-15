@@ -6,9 +6,11 @@ Follow the steps below to run your own instance of the app locally.
 1. Clone/fork the repository and navigate to the root directory.
 2. [Set up your Enoki API keys](#setting-up-enoki-api-keys)
 3. [Set up your google client id](#getting-your-google-client-id) and [Enoki Auth Provider](#setting-up-your-enoki-auth-provider).
-4. [Set up your Enoki Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
-5. Install the dependencies by running `yarn install`.
-6. Start the app by running `yarn dev`.
+4. [Deploy and connect your smart contract](#deploying-and-connecting-your-smart-contract).
+5. [Set up your Enoki Sponsored Transactions](#setting-up-enoki-sponsor-transactions).
+6. Install the dependencies by running `yarn install`.
+7. Start the app by running `yarn dev`.
+8. Try out your app by logging in with Google and creating a counter!
 
 ## Enoki Dev Portal Setup
 ### Setting up Enoki API keys
@@ -16,7 +18,7 @@ In order to use Enoki, you need to sign into the Enoki Dev Portal and set up you
 
 1. Navigate to the [Enoki Dev Portal](https://portal.enoki.mystenlabs.com) and sign in with the email you want to manage your project with. 
 
-    Note, that during your first time signing in, you'll be asked to provide some info to help Mysten Labs keep informed about who is using Enoki. 
+    Note, that during your first time signing in, you'll be asked to provide some info to help Mysten Labs keep informed about who is using Enoki. You will also be prompted to select your payment plan. Go ahead and skip this for now.
 
     The portal should look something like this when you successfully log on: 
     ![Empty Portal](images/empty-dev-portal.png)
@@ -58,17 +60,14 @@ In order to use Enoki, you need to sign into the Enoki Dev Portal and set up you
     ENOKI_SECRET_KEY=enoki_private_905204de81012fd7422a9902907f112c
     ```
 
+You have successfully set up your Enoki API keys! Continue to the next steps in [setting up your app](#enoki-example-app)
+
 ### Setting up your Enoki Auth Provider
 To use the *zkLogin* feature, you will need to connect your auth provider to the Enoki Dev Portal. 
 
 1. Navigate to the `Auth Providers` section of your Enoki project. 
 
-    The Auth Providers section is where you can add and manage your app's auth providers. Currently, Enoki supports: 
-
-    - Google
-    - Twitch
-    - Facebook
-    - Apple
+    The Auth Providers section is where you can add and manage your app's auth providers. 
 
     It should look like this: 
     ![Empty Auth Provider Section](images/empty-auth-provider-page.png)
@@ -77,16 +76,6 @@ To use the *zkLogin* feature, you will need to connect your auth provider to the
 
     You will be given a prompt that looks like this: 
     ![New Auth Provider Prompt](images/auth-provider-prompt.png)
-
-    You'll need to select/input the following: 
-
-    - Auth provider: 
-      - [ ] Google
-      - [ ] Facebook
-      - [ ] Twitch
-      - [ ] Apple
-
-    - Client ID: The client given by your desired auth provider
 
     When creating a key for this demo app, select `Google` and paste your google client id. Follow the [instructions](#getting-your-google-client-id) to get your client id from Google.
 
@@ -103,9 +92,7 @@ To use the *zkLogin* feature, you will need to connect your auth provider to the
 
     Note that you can add more auth providers by repeating the steps above.
 
-4. You have successfully connected your auth provider to Enoki! 
-
-    Reference this demo code as an example of implementing the Enoki auth flow in your app.
+4. You have successfully connected your auth provider to Enoki! Continue to the next steps in [setting up your app](#enoki-example-app)
 
 ### Setting up Enoki Sponsor Transactions
 In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addresses and move targets that are supported. 
@@ -122,16 +109,16 @@ In the Enoki Dev Portal, you can set up *Sponsored Transactions* by adding addre
     Any allowed addresses are senders that can use sponsored transactions. Any allowed move call targets are functions operations that any of your users can use sponsored transactions for. 
 
     This app supports the following move call targets: 
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::create`
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::increment`
-    - `0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa::counter::set_value`
+    - `{PACKAGE_ID}::counter::create`
+    - `{PACKAGE_ID}::counter::increment`
+    - `{PACKAGE_ID}::counter::set_value`
+
+    NOTE: Use the package ID you got from [deploying your smart contract](#deploying-and-connecting-your-smart-contract) to get the move call targets. Replace `{PACKAGE_ID}` with the package ID you got from deploying your smart contract.
 
     Your allow list should look something like this: 
     ![New Sponsored Transaction allow list](images/new-sponsored-transaction-list.png)
 
-3. You have successfully set up your Enoki Sponsored Transaction allow list! 
-
-    Reference this demo code as an example to implementing sponsored transactions in your app.
+3. You have successfully set up your Enoki Sponsored Transaction allow list! Continue to the next steps in [setting up your app](#enoki-example-app)
 
 
 ## Getting your Google Client ID
@@ -143,7 +130,7 @@ You will need to set up a Google Auth API key to use the Google Sign-In feature 
     ![Create OAuth client ID](images/create-credential.png)
 
 3. Select `Web application` as the application type.
-4. Add `http://localhost:3000/` to the `Authorized redirect URIs`.
+4. Add `http://localhost:3000/auth` to the `Authorized redirect URIs`.
 
     Your setup should look something like this:
     ![OAuth setup](images/authorized-url.png)
@@ -165,6 +152,6 @@ This demo app uses a simple Sui smart contract that allows anyone to create glob
 6. After the package window appears, copy the package ID and paste it into the `.env.local` file as the `PACKAGE_ID` variable. ![Deployed Counter Package](images/move-studio-deployed-package.png) It should look something like this:
 
     ```
-    PACKAGE_ID=0x915bbeb2fb2274c268378908e50e0e2bee1e1e1da03058f17a86c7b8aabad190
+    PACKAGE_ID=0x7b6a8f5782e57cd948dc75ee098b73046a79282183d51eefb83d31ec95c312aa
     ```
 
