@@ -3,6 +3,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { useCreateCounterTransaction } from "@/hooks/useCreateCounterTransaction";
+import { useCustomWallet } from "@/contexts/CustomWallet";
 
 export function CreateCounter({
   onCreated,
@@ -10,6 +11,7 @@ export function CreateCounter({
   onCreated: (id: string) => void;
 }) {
   const [waitingForTxn, setWaitingForTxn] = useState(false);
+  const { isConnected } = useCustomWallet();
 
   const { handleExecute } = useCreateCounterTransaction();
 
@@ -35,9 +37,9 @@ export function CreateCounter({
         onClick={() => {
           create();
         }}
-        disabled={waitingForTxn}
+        disabled={waitingForTxn || !isConnected}
       >
-        {waitingForTxn ? <ClipLoader size={20} /> : "Create Counter"}
+        {waitingForTxn ? <ClipLoader size={20} /> : isConnected ? "Create Personal Counter" : "Sign in to increment"}
       </Button>
     </Card>
   );

@@ -1,7 +1,7 @@
 import { useSuiClient, useSuiClientQuery } from "@mysten/dapp-kit";
 import type { SuiObjectData } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -10,7 +10,7 @@ import { useResetCounterTransaction } from "@/hooks/useResetCounterTransaction";
 import { useCustomWallet } from "@/contexts/CustomWallet";
 
 export function Counter({ id }: { id: string }) {
-  const { address } = useCustomWallet();
+  const { address, isConnected } = useCustomWallet();
   const suiClient = useSuiClient();
   const { data, isPending, error, refetch } = useSuiClientQuery("getObject", {
     id,
@@ -19,6 +19,15 @@ export function Counter({ id }: { id: string }) {
       showOwner: true,
     },
   });
+
+  // refetch the data every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [waitingForTxn, setWaitingForTxn] = useState("");
 
@@ -67,15 +76,15 @@ export function Counter({ id }: { id: string }) {
 
       <CardContent className="flex flex-col gap-2">
         <span>Count: {getCounterFields(data.data)?.value}</span>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row justify-around items-center gap-2">
           <Button
             onClick={() => executeMoveCall("increment")}
-            disabled={waitingForTxn !== ""}
+            disabled={waitingForTxn !== "" || !isConnected}
           >
             {waitingForTxn === "increment" ? (
               <ClipLoader size={20} />
             ) : (
-              "Increment"
+              isConnected ? "Increment" : "Sign in to increment"
             )}
           </Button>
           {ownedByCurrentAccount ? (
