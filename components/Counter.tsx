@@ -10,7 +10,7 @@ import { useResetCounterTransaction } from "@/hooks/useResetCounterTransaction";
 import { useCustomWallet } from "@/contexts/CustomWallet";
 
 export function Counter({ id }: { id: string }) {
-  const { address } = useCustomWallet();
+  const { address, isConnected } = useCustomWallet();
   const suiClient = useSuiClient();
   const { data, isPending, error, refetch } = useSuiClientQuery("getObject", {
     id,
@@ -70,12 +70,12 @@ export function Counter({ id }: { id: string }) {
         <div className="flex flex-row items-center gap-2">
           <Button
             onClick={() => executeMoveCall("increment")}
-            disabled={waitingForTxn !== ""}
+            disabled={waitingForTxn !== "" || !isConnected}
           >
             {waitingForTxn === "increment" ? (
               <ClipLoader size={20} />
             ) : (
-              "Increment"
+              isConnected ? "Increment" : "Sign in to increment"
             )}
           </Button>
           {ownedByCurrentAccount ? (

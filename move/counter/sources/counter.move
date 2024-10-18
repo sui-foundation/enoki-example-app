@@ -14,6 +14,14 @@ module counter::counter {
     value: u64
   }
 
+  fun init(ctx: &mut TxContext) {
+    transfer::share_object(Counter {
+      id: object::new(ctx),
+      owner: @0x0,
+      value: 0
+    })
+  }
+
   /// Create and share a Counter object.
   public fun create(ctx: &mut TxContext) {
     transfer::share_object(Counter {
