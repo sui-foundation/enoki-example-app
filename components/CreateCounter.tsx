@@ -39,7 +39,7 @@ export function CreateCounter({
         }}
         disabled={waitingForTxn || !isConnected}
       >
-        {waitingForTxn ? <ClipLoader size={20} /> : isConnected ? "Create Counter" : "Sign in to increment"}
+        {waitingForTxn ? <ClipLoader size={20} /> : isConnected ? "Create Personal Counter" : "Sign in to increment"}
       </Button>
     </Card>
   );

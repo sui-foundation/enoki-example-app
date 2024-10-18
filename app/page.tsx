@@ -29,9 +29,9 @@ export default function Page() {
           <a href="https://github.com/sui-foundation/enoki-example-app" target="_blank" className="hover:cursor-pointer transform hover:scale-110 transition-transform"><GithubIcon size={24} /></a>
         </div>
       </div>
-      <div className="w-full flex flex-col items-center p-4">
+      <div className="w-full flex flex-col items-center gap-4 p-4">
           <Counter id={clientConfig.GLOBAL_COUNTER_ID} />
-          {/* {
+          {
             counterId ? (
               <Counter id={counterId} />
             ) : (
@@ -42,7 +42,7 @@ export default function Page() {
                 }}
               />
             )
-          } */}
+          }
       </div>
     </div>
   );
