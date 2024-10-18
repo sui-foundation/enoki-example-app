@@ -41,7 +41,7 @@ export default function Page() {
             />
           )
         ) : (
-          <div>Please connect your wallet to continue.</div>
+          <div>Please sign in with Google to continue.</div>
         )}
       </div>
     </div>
