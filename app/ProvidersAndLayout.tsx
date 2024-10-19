@@ -16,6 +16,8 @@ import clientConfig from "@/config/clientConfig";
 import "@mysten/dapp-kit/dist/index.css";
 import CustomWalletProvider from "@/contexts/CustomWallet";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from '@vercel/analytics/react';
+
 
 export interface StorageAdapter {
   setItem(key: string, value: string): Promise<void>;
@@ -64,6 +66,7 @@ export const ProvidersAndLayout = ({ children }: ChildrenProps) => {
                 <main>
                   {children}
                   <Toaster duration={2000} />
+                  <Analytics />
                 </main>
               </CustomWalletProvider>
             </AuthenticationProvider>
